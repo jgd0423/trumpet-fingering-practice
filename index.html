@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="B♭ 트럼펫 기보음과 운지를 익히는 5초 랜덤 퀴즈">
   <title>트럼펫 운지 퀴즈</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: light;
@@ -21,14 +24,19 @@
       --accent: var(--red);
       --line: rgba(47, 45, 40, .28);
       --shadow: 0 28px 80px rgba(6, 17, 29, .46);
-      --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Baskerville, "Book Antiqua", "AppleMyungjo", "Noto Serif KR", Georgia, serif;
+      --serif-ko: "Noto Serif KR", "AppleMyungjo", "Batang", serif;
+      --serif-latin: "Iowan Old Style", "Palatino Linotype", Palatino, Baskerville, "Book Antiqua", Georgia, serif;
+      --serif: var(--serif-ko);
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      min-height: 100vh;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
       background:
         radial-gradient(circle at 50% -18%, rgba(224,201,132,.2) 0, transparent 38rem),
         linear-gradient(90deg, transparent 0 49.85%, rgba(224,201,132,.06) 49.9% 50.1%, transparent 50.15%),
@@ -38,17 +46,24 @@
       font-family: var(--serif);
       display: grid;
       place-items: center;
-      padding: 34px;
+      padding: clamp(12px, 3vh, 34px);
     }
 
     .app {
-      width: min(780px, 100%);
+      width: 100%;
+      max-width: 780px;
+      min-width: 0;
+      height: min(900px, 100%);
       position: relative;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
     }
 
     header {
       position: relative;
-      margin: 0 auto 22px;
+      min-width: 0;
+      max-width: 100%;
+      margin: 0 auto clamp(10px, 2vh, 22px);
       color: var(--paper);
       text-align: center;
     }
@@ -60,6 +75,7 @@
       font-weight: 700;
       letter-spacing: .28em;
       text-transform: uppercase;
+      font-family: var(--serif-latin);
     }
 
     h1 {
@@ -74,6 +90,7 @@
 
     .title-row {
       display: flex;
+      min-width: 0;
       align-items: center;
       justify-content: center;
       gap: clamp(12px, 3vw, 34px);
@@ -92,6 +109,7 @@
       font-size: .84rem;
       font-style: italic;
       letter-spacing: .08em;
+      font-family: var(--serif-latin);
     }
 
     .range {
@@ -103,8 +121,12 @@
 
     .quiz {
       position: relative;
+      width: 100%;
+      max-width: 100%;
       display: grid;
+      min-height: 0;
       grid-template-columns: 1fr;
+      grid-template-rows: minmax(0, 1.45fr) minmax(0, .8fr);
       overflow: hidden;
       border: 1px solid var(--gold-light);
       outline: 6px double var(--gold);
@@ -128,7 +150,7 @@
 
     .score-panel {
       position: relative;
-      min-height: 430px;
+      min-height: 0;
       padding: 36px 40px 32px;
       display: grid;
       grid-template-rows: auto 1fr auto;
@@ -141,6 +163,7 @@
 
     .phase-row, .controls {
       display: flex;
+      min-width: 0;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
@@ -148,6 +171,7 @@
 
     .transport {
       display: flex;
+      min-width: 0;
       gap: 8px;
     }
 
@@ -183,20 +207,22 @@
       font-size: .68rem;
       letter-spacing: .14em;
       font-variant-numeric: tabular-nums;
+      font-family: var(--serif-latin);
     }
 
     .staff-wrap {
       width: 100%;
-      min-height: 320px;
+      min-height: 0;
       display: grid;
       place-items: center;
     }
 
     #staff {
       display: block;
-      width: min(100%, 360px);
-      aspect-ratio: 360 / 280;
+      width: min(100%, 300px);
+      aspect-ratio: 300 / 180;
       overflow: visible;
+      transform: translateX(-15px);
     }
 
     #staff svg {
@@ -309,7 +335,7 @@
 
     .answer-panel {
       position: relative;
-      min-height: 300px;
+      min-height: 0;
       padding: 48px clamp(34px, 4vw, 54px);
       display: flex;
       flex-direction: column;
@@ -342,6 +368,7 @@
       font-weight: 700;
       letter-spacing: .22em;
       text-transform: uppercase;
+      font-family: var(--serif-latin);
     }
 
     .answer-content {
@@ -410,6 +437,7 @@
       font-weight: 700;
       font-style: italic;
       letter-spacing: .12em;
+      font-family: var(--serif-latin);
     }
 
     .open-mark.visible { display: block; }
@@ -463,6 +491,7 @@
       color: var(--gold-light);
       font-size: .64rem;
       font-style: italic;
+      font-family: var(--serif-latin);
     }
 
     .sr-only {
@@ -478,39 +507,39 @@
     }
 
     @media (max-width: 780px) {
-      body { padding: 18px 12px; }
-      .app { width: 100%; }
-      header { margin-bottom: 16px; }
+      body { padding: max(8px, env(safe-area-inset-top)) 10px max(8px, env(safe-area-inset-bottom)); }
+      .app { width: 100%; height: 100%; }
+      header { margin-bottom: 8px; }
       .eyebrow { margin-bottom: 6px; font-size: .58rem; letter-spacing: .2em; }
-      .title-row { gap: 6px; }
-      h1 { font-size: clamp(1.85rem, 9vw, 2.65rem); white-space: nowrap; letter-spacing: -.065em; }
-      .flourish { font-size: 1.25rem; }
-      .subtitle { margin-top: 7px; font-size: .74rem; }
+      .title-row { gap: 4px; }
+      h1 { min-width: 0; font-size: clamp(1.75rem, 7.8vw, 2.35rem); white-space: nowrap; letter-spacing: -.05em; }
+      .flourish { flex: 0 0 auto; font-size: 1.05rem; }
+      .subtitle { max-width: 100%; margin-top: 6px; font-size: clamp(.52rem, 2.25vw, .66rem); letter-spacing: .02em; white-space: nowrap; }
       .range { margin-top: 4px; font-size: .63rem; }
-      .quiz { grid-template-columns: 1fr; }
+      .quiz { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1.5fr) minmax(0, .78fr); }
       .quiz { outline-width: 4px; outline-offset: -10px; }
       .quiz::before, .quiz::after { font-size: 1.55rem; }
       .quiz::before { left: 11px; top: 10px; }
       .quiz::after { right: 11px; bottom: 10px; }
-      .score-panel { min-height: 320px; padding: 22px 18px 17px; border-right: 0; border-bottom: 4px double var(--gold); }
+      .score-panel { min-height: 0; padding: 18px 18px 13px; border-right: 0; border-bottom: 4px double var(--gold); }
       .phase { gap: 7px; font-size: .72rem; }
       .phase-dot { width: 16px; height: 16px; }
       .round { font-size: .6rem; letter-spacing: .1em; }
-      .staff-wrap { min-height: 158px; }
-      #staff { width: min(100%, 280px); }
+      .staff-wrap { min-height: 0; }
+      #staff { width: min(100%, 270px); }
       .controls { gap: 9px; }
       .transport { gap: 6px; }
-      button { min-height: 44px; font-size: .72rem; }
-      .button-main, .button-next { padding: 10px 13px; }
+      button { min-height: 44px; font-size: .69rem; }
+      .button-main, .button-next { padding: 9px 11px; }
       .progress-track { margin-top: 10px; }
-      .answer-panel { min-height: 220px; padding: 32px 22px 20px; align-items: center; text-align: center; }
+      .answer-panel { min-height: 0; padding: 18px 20px 12px; align-items: center; text-align: center; }
       .answer-panel::before { display: none; }
       .answer-content { width: 100%; }
-      .note-name { font-size: clamp(3.1rem, 17vw, 4.4rem); }
-      .note-sub { margin: 4px 0 17px; }
+      .note-name { font-size: clamp(2.8rem, 14vw, 4rem); }
+      .note-sub { margin: 3px 0 12px; }
       .valves { justify-content: center; gap: 10px; }
-      .valve { width: min(19vw, 64px); }
-      .slide-notice { margin-top: 14px; padding: 6px 10px; font-size: .7rem; }
+      .valve { width: min(17vw, 58px); }
+      .slide-notice { margin-top: 10px; padding: 5px 9px; font-size: .68rem; }
       .waiting { left: 24px; right: 24px; font-size: 1.28rem; }
       .waiting::before { margin-bottom: 6px; }
       .waiting::after { display: none; }
@@ -524,6 +553,17 @@
       .score-panel { padding-left: 18px; padding-right: 18px; }
       #phaseText { max-width: 145px; }
       .valves { gap: 8px; }
+    }
+
+    @media (max-height: 680px) and (max-width: 780px) {
+      .eyebrow { margin-bottom: 3px; }
+      h1 { font-size: clamp(1.65rem, 7.8vw, 2.15rem); }
+      .subtitle { margin-top: 3px; }
+      .range { margin-top: 2px; }
+      .score-panel { padding-top: 14px; padding-bottom: 10px; }
+      button { min-height: 40px; }
+      .answer-panel { padding-top: 12px; padding-bottom: 8px; }
+      .waiting { font-size: 1.08rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -671,12 +711,12 @@
 
         const { Accidental, Renderer, Stave, StaveNote, Stem, TickContext } = VexFlow;
         const renderer = new Renderer(els.staff, Renderer.Backends.SVG);
-        renderer.resize(360, 280);
+        renderer.resize(300, 180);
         const context = renderer.getContext();
         context.setFillStyle('#2f2d28');
         context.setStrokeStyle('#2f2d28');
 
-        const stave = new Stave(26, 68, 308);
+        const stave = new Stave(40, 42, 220);
         stave.addClef('treble');
         stave.setContext(context).draw();
 
@@ -691,7 +731,7 @@
         note.setStave(stave).setContext(context);
 
         const tickContext = new TickContext();
-        tickContext.addTickable(note).preFormat().setX(100);
+        tickContext.addTickable(note).preFormat().setX(70);
         note.draw();
       }
 
