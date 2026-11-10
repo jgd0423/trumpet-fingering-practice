@@ -31,6 +31,11 @@
 
     * { box-sizing: border-box; }
 
+    html,
+    body {
+      touch-action: manipulation;
+    }
+
     body {
       margin: 0;
       width: 100%;
@@ -258,6 +263,9 @@
 
     button {
       appearance: none;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
       position: relative;
       border: 3px double var(--gold);
       border-radius: 0;
