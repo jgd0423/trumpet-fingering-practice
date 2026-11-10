@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="B♭ 트럼펫 기보음과 운지를 익히는 5초 랜덤 퀴즈">
+  <title>트럼펫 운지 퀴즈</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #2f2d28;
+      --muted: #6d665a;
+      --paper: #f0e5cc;
+      --paper-deep: #dfd0ae;
+      --parchment: #d6c6a3;
+      --blue: #173653;
+      --blue-deep: #0e253b;
+      --red: #8a353f;
+      --gold: #c8a75f;
+      --gold-light: #e0c984;
+      --accent: var(--red);
+      --line: rgba(47, 45, 40, .28);
+      --shadow: 0 28px 80px rgba(6, 17, 29, .46);
+      --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Baskerville, "Book Antiqua", "AppleMyungjo", "Noto Serif KR", Georgia, serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% -18%, rgba(224,201,132,.2) 0, transparent 38rem),
+        linear-gradient(90deg, transparent 0 49.85%, rgba(224,201,132,.06) 49.9% 50.1%, transparent 50.15%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,.014) 0, rgba(255,255,255,.014) 1px, transparent 1px, transparent 7px),
+        var(--blue-deep);
+      color: var(--ink);
+      font-family: var(--serif);
+      display: grid;
+      place-items: center;
+      padding: 34px;
+    }
+
+    .app {
+      width: min(780px, 100%);
+      position: relative;
+    }
+
+    header {
+      position: relative;
+      margin: 0 auto 22px;
+      color: var(--paper);
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 9px;
+      color: var(--gold-light);
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 5vw, 4.7rem);
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: -.055em;
+      text-shadow: 0 2px 0 rgba(0,0,0,.28);
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(12px, 3vw, 34px);
+    }
+
+    .flourish {
+      color: var(--gold);
+      font-size: clamp(1.8rem, 3.8vw, 3.5rem);
+      line-height: 1;
+      transform: translateY(4px);
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--paper-deep);
+      font-size: .84rem;
+      font-style: italic;
+      letter-spacing: .08em;
+    }
+
+    .range {
+      margin: 5px 0 0;
+      color: var(--gold-light);
+      font-size: .72rem;
+      letter-spacing: .06em;
+    }
+
+    .quiz {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr;
+      overflow: hidden;
+      border: 1px solid var(--gold-light);
+      outline: 6px double var(--gold);
+      outline-offset: -15px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .quiz::before,
+    .quiz::after {
+      position: absolute;
+      z-index: 4;
+      color: var(--gold);
+      font-size: 2.25rem;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .quiz::before { content: "✥"; left: 18px; top: 15px; }
+    .quiz::after { content: "✥"; right: 18px; bottom: 15px; transform: rotate(45deg); }
+
+    .score-panel {
+      position: relative;
+      min-height: 430px;
+      padding: 36px 40px 32px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      border-bottom: 4px double var(--gold);
+      background:
+        linear-gradient(115deg, rgba(255,255,255,.22), transparent 34%),
+        repeating-linear-gradient(2deg, rgba(91,72,44,.018) 0 1px, transparent 1px 6px),
+        var(--paper);
+    }
+
+    .phase-row, .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .transport {
+      display: flex;
+      gap: 8px;
+    }
+
+    .phase {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-size: .8rem;
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: .035em;
+    }
+
+    .phase-dot {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--red);
+      border-radius: 50%;
+      color: var(--red);
+    }
+
+    .phase-dot::after { content: "✦"; font-size: .62rem; }
+
+    .phase.reveal .phase-dot {
+      background: var(--red);
+      color: var(--paper);
+    }
+
+    .round {
+      color: var(--muted);
+      font-size: .68rem;
+      letter-spacing: .14em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .staff-wrap {
+      width: 100%;
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+    }
+
+    #staff {
+      display: block;
+      width: min(100%, 360px);
+      aspect-ratio: 360 / 280;
+      overflow: visible;
+    }
+
+    #staff svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .score-error {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.65;
+    }
+
+    .progress-track {
+      margin-top: 13px;
+      height: 3px;
+      overflow: hidden;
+      border: 1px solid var(--gold);
+      background: transparent;
+    }
+
+    .progress {
+      height: 100%;
+      width: 100%;
+      background: var(--red);
+      transform-origin: left;
+    }
+
+    button {
+      appearance: none;
+      position: relative;
+      border: 3px double var(--gold);
+      border-radius: 0;
+      background:
+        linear-gradient(135deg, var(--gold) 0 5px, transparent 5px) top left / 11px 11px no-repeat,
+        linear-gradient(315deg, var(--gold) 0 5px, transparent 5px) bottom right / 11px 11px no-repeat,
+        linear-gradient(180deg, #f7edd7, var(--paper-deep));
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      cursor: pointer;
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.28),
+        0 3px 0 rgba(47,45,40,.18),
+        0 6px 14px rgba(47,45,40,.08);
+      text-shadow: 0 1px rgba(255,255,255,.35);
+      transition: transform .15s ease, color .15s ease, background .15s ease, box-shadow .15s ease;
+    }
+
+    button:not(:disabled):hover {
+      transform: translateY(-2px);
+      background:
+        linear-gradient(135deg, var(--gold-light) 0 5px, transparent 5px) top left / 11px 11px no-repeat,
+        linear-gradient(315deg, var(--gold-light) 0 5px, transparent 5px) bottom right / 11px 11px no-repeat,
+        linear-gradient(180deg, #244968, var(--blue));
+      color: var(--paper);
+      box-shadow: inset 0 0 0 2px rgba(224,201,132,.2), 0 5px 0 rgba(14,37,59,.34), 0 9px 18px rgba(14,37,59,.18);
+      text-shadow: 0 1px rgba(0,0,0,.35);
+    }
+
+    button:not(:disabled):active {
+      transform: translateY(1px);
+      box-shadow: inset 0 0 0 2px rgba(224,201,132,.2), 0 1px 0 rgba(14,37,59,.32);
+    }
+    button:focus-visible { outline: 3px double var(--gold); outline-offset: 3px; }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.2);
+    }
+
+    .button-main {
+      padding: 9px 14px;
+    }
+
+    #startButton {
+      border-color: var(--gold-light);
+      background:
+        linear-gradient(135deg, var(--gold-light) 0 5px, transparent 5px) top left / 11px 11px no-repeat,
+        linear-gradient(315deg, var(--gold-light) 0 5px, transparent 5px) bottom right / 11px 11px no-repeat,
+        linear-gradient(180deg, #244968, var(--blue));
+      color: var(--paper);
+      text-shadow: 0 1px rgba(0,0,0,.35);
+    }
+
+    .button-next {
+      padding: 9px 14px;
+      color: var(--red);
+      border-color: var(--red);
+      background:
+        linear-gradient(135deg, var(--red) 0 5px, transparent 5px) top left / 11px 11px no-repeat,
+        linear-gradient(315deg, var(--red) 0 5px, transparent 5px) bottom right / 11px 11px no-repeat,
+        linear-gradient(180deg, #f7edd7, var(--paper-deep));
+    }
+
+    .button-next:not(:disabled):hover {
+      background:
+        linear-gradient(135deg, var(--gold-light) 0 5px, transparent 5px) top left / 11px 11px no-repeat,
+        linear-gradient(315deg, var(--gold-light) 0 5px, transparent 5px) bottom right / 11px 11px no-repeat,
+        linear-gradient(180deg, #9b4650, var(--red));
+    }
+
+    .answer-panel {
+      position: relative;
+      min-height: 300px;
+      padding: 48px clamp(34px, 4vw, 54px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(224,201,132,.18), transparent 15rem),
+        linear-gradient(90deg, transparent 0 7px, rgba(224,201,132,.38) 7px 8px, transparent 8px calc(100% - 8px), rgba(224,201,132,.38) calc(100% - 8px) calc(100% - 7px), transparent calc(100% - 7px)),
+        repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0, rgba(255,255,255,.018) 1px, transparent 1px, transparent 7px),
+        linear-gradient(135deg, var(--blue), var(--blue-deep));
+      color: var(--paper);
+    }
+
+    .answer-panel::before {
+      content: "✥";
+      position: absolute;
+      left: 50%;
+      top: 34px;
+      transform: translateX(-50%);
+      color: var(--gold);
+      font-size: 2rem;
+      pointer-events: none;
+    }
+
+    .answer-label {
+      margin: 0 0 12px;
+      color: var(--gold-light);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .answer-content {
+      width: 100%;
+      max-width: 470px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .28s ease, transform .28s ease;
+    }
+
+    .answer-content.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .note-name {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(3.2rem, 8vw, 6.8rem);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -.05em;
+    }
+
+    .note-sub {
+      margin: 10px 0 38px;
+      color: var(--gold-light);
+      font-size: .78rem;
+      font-style: italic;
+    }
+
+    .valves {
+      display: flex;
+      justify-content: center;
+      gap: 13px;
+    }
+
+    .valve {
+      width: clamp(68px, 8vw, 88px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--gold-light);
+      border-radius: 50%;
+      outline: 1px solid rgba(212,182,111,.42);
+      outline-offset: -6px;
+      color: var(--paper-deep);
+      font-family: var(--serif);
+      font-size: 2rem;
+      transition: .25s ease;
+    }
+
+    .valve.pressed {
+      border-color: var(--gold-light);
+      background: var(--red);
+      color: var(--paper);
+      box-shadow: 0 7px 0 var(--gold);
+      transform: translateY(8px);
+    }
+
+    .open-mark {
+      display: none;
+      margin-top: 20px;
+      color: var(--gold-light);
+      font-size: .9rem;
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: .12em;
+    }
+
+    .open-mark.visible { display: block; }
+
+    .slide-notice {
+      margin-top: 18px;
+      padding: 7px 12px;
+      border: 1px solid var(--gold-light);
+      color: var(--gold-light);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .slide-notice[hidden] { display: none; }
+
+    .waiting {
+      position: absolute;
+      left: clamp(28px, 4vw, 54px);
+      right: clamp(28px, 4vw, 54px);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--paper-deep);
+      font-family: var(--serif);
+      font-size: clamp(1.65rem, 3.5vw, 2.8rem);
+      font-style: italic;
+      line-height: 1.28;
+      text-align: center;
+      transition: opacity .22s ease;
+    }
+
+    .waiting::before,
+    .waiting::after {
+      display: block;
+      color: var(--gold);
+      font-style: normal;
+      font-size: 1.7rem;
+      line-height: 1;
+    }
+
+    .waiting::before { content: "❧"; margin-bottom: 14px; }
+    .waiting::after { content: "✥"; margin-top: 14px; }
+
+    .waiting.hidden { opacity: 0; }
+
+    .tip {
+      position: absolute;
+      right: 26px;
+      bottom: 24px;
+      z-index: 1;
+      color: var(--gold-light);
+      font-size: .64rem;
+      font-style: italic;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 780px) {
+      body { padding: 18px 12px; }
+      .app { width: 100%; }
+      header { margin-bottom: 16px; }
+      .eyebrow { margin-bottom: 6px; font-size: .58rem; letter-spacing: .2em; }
+      .title-row { gap: 6px; }
+      h1 { font-size: clamp(1.85rem, 9vw, 2.65rem); white-space: nowrap; letter-spacing: -.065em; }
+      .flourish { font-size: 1.25rem; }
+      .subtitle { margin-top: 7px; font-size: .74rem; }
+      .range { margin-top: 4px; font-size: .63rem; }
+      .quiz { grid-template-columns: 1fr; }
+      .quiz { outline-width: 4px; outline-offset: -10px; }
+      .quiz::before, .quiz::after { font-size: 1.55rem; }
+      .quiz::before { left: 11px; top: 10px; }
+      .quiz::after { right: 11px; bottom: 10px; }
+      .score-panel { min-height: 320px; padding: 22px 18px 17px; border-right: 0; border-bottom: 4px double var(--gold); }
+      .phase { gap: 7px; font-size: .72rem; }
+      .phase-dot { width: 16px; height: 16px; }
+      .round { font-size: .6rem; letter-spacing: .1em; }
+      .staff-wrap { min-height: 158px; }
+      #staff { width: min(100%, 280px); }
+      .controls { gap: 9px; }
+      .transport { gap: 6px; }
+      button { min-height: 44px; font-size: .72rem; }
+      .button-main, .button-next { padding: 10px 13px; }
+      .progress-track { margin-top: 10px; }
+      .answer-panel { min-height: 220px; padding: 32px 22px 20px; align-items: center; text-align: center; }
+      .answer-panel::before { display: none; }
+      .answer-content { width: 100%; }
+      .note-name { font-size: clamp(3.1rem, 17vw, 4.4rem); }
+      .note-sub { margin: 4px 0 17px; }
+      .valves { justify-content: center; gap: 10px; }
+      .valve { width: min(19vw, 64px); }
+      .slide-notice { margin-top: 14px; padding: 6px 10px; font-size: .7rem; }
+      .waiting { left: 24px; right: 24px; font-size: 1.28rem; }
+      .waiting::before { margin-bottom: 6px; }
+      .waiting::after { display: none; }
+      .tip { display: none; }
+    }
+
+    @media (max-width: 380px) {
+      h1 { font-size: 1.72rem; }
+      .flourish { font-size: 1rem; }
+      .subtitle { font-size: .68rem; }
+      .score-panel { padding-left: 18px; padding-right: 18px; }
+      #phaseText { max-width: 145px; }
+      .valves { gap: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <p class="eyebrow" lang="it">Op. 1 · Per tromba in Si bemolle</p>
+      <div class="title-row">
+        <span class="flourish" aria-hidden="true">❦</span>
+        <h1>트럼펫 운지 연습</h1>
+        <span class="flourish" aria-hidden="true">❧</span>
+      </div>
+      <p class="subtitle" lang="en">The Well-Tempered Trumpet, Half-Remembered Fingerings</p>
+      <p class="range">기보음 F♯3–G5 · 5초 숙고 · 3초 계시</p>
+    </header>
+
+    <section class="quiz" aria-label="트럼펫 운지 퀴즈">
+      <div class="score-panel">
+        <div class="phase-row">
+          <div id="phase" class="phase"><span class="phase-dot"></span><span id="phaseText">운지를 떠올려 보세요</span></div>
+          <span id="round" class="round">ROUND 01</span>
+        </div>
+
+        <div class="staff-wrap">
+          <div id="staff" role="img" aria-label="무작위 기보음 한 개가 높은음자리표 오선지에 표시됩니다."></div>
+        </div>
+
+        <div>
+          <div class="controls">
+            <div class="transport">
+              <button id="startButton" class="button-main" type="button">시작</button>
+              <button id="pauseButton" class="button-main" type="button" aria-pressed="false" disabled>일시정지</button>
+            </div>
+            <button id="nextButton" class="button-next" type="button">다음 문제 →</button>
+          </div>
+          <div class="progress-track" aria-hidden="true"><div id="progress" class="progress"></div></div>
+        </div>
+      </div>
+
+      <aside class="answer-panel" aria-live="polite">
+        <div id="waiting" class="waiting">머릿속으로<br>밸브를 눌러보세요.</div>
+        <div id="answer" class="answer-content">
+          <p class="answer-label">정답</p>
+          <p id="noteName" class="note-name">도</p>
+          <p id="noteSub" class="note-sub">C4 · 기보음</p>
+          <div class="valves" aria-label="누를 밸브">
+            <span class="valve" data-valve="1">1</span>
+            <span class="valve" data-valve="2">2</span>
+            <span class="valve" data-valve="3">3</span>
+          </div>
+          <div id="openMark" class="open-mark">0 · OPEN</div>
+          <div id="slideNotice" class="slide-notice" hidden>↔ 3번 슬라이드 빼기</div>
+        </div>
+        <div class="tip">Space 일시정지 · N 다음 문제</div>
+      </aside>
+      <p id="liveStatus" class="sr-only" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script src="./assets/vexflow-5.0.0.js"></script>
+  <script>
+    (() => {
+      const NOTE_MS = 5000;
+      const ANSWER_MS = 3000;
+
+      const korean = { C: '도', D: '레', E: '미', F: '파', G: '솔', A: '라', B: '시' };
+      const staffOrder = { C: 0, D: 1, E: 2, F: 3, G: 4, A: 5, B: 6 };
+      const thirdSlideNotes = new Set([61, 62]); // Written C♯4/D♭4 and D4.
+      const fingerings = {
+        54: '123', 55: '13', 56: '23', 57: '12', 58: '1', 59: '2', 60: '0',
+        61: '123', 62: '13', 63: '23', 64: '12', 65: '1', 66: '2', 67: '0',
+        68: '23', 69: '12', 70: '1', 71: '2', 72: '0', 73: '12', 74: '1',
+        75: '2', 76: '0', 77: '1', 78: '2', 79: '0'
+      };
+      const spellings = {
+        54: [['F', '#', 3], ['G', 'b', 3]],
+        55: [['G', '', 3]],
+        56: [['G', '#', 3], ['A', 'b', 3]],
+        57: [['A', '', 3]],
+        58: [['A', '#', 3], ['B', 'b', 3]],
+        59: [['B', '', 3]],
+        60: [['C', '', 4]],
+        61: [['C', '#', 4], ['D', 'b', 4]],
+        62: [['D', '', 4]],
+        63: [['D', '#', 4], ['E', 'b', 4]],
+        64: [['E', '', 4]],
+        65: [['F', '', 4]],
+        66: [['F', '#', 4], ['G', 'b', 4]],
+        67: [['G', '', 4]],
+        68: [['G', '#', 4], ['A', 'b', 4]],
+        69: [['A', '', 4]],
+        70: [['A', '#', 4], ['B', 'b', 4]],
+        71: [['B', '', 4]],
+        72: [['C', '', 5]],
+        73: [['C', '#', 5], ['D', 'b', 5]],
+        74: [['D', '', 5]],
+        75: [['D', '#', 5], ['E', 'b', 5]],
+        76: [['E', '', 5]],
+        77: [['F', '', 5]],
+        78: [['F', '#', 5], ['G', 'b', 5]],
+        79: [['G', '', 5]]
+      };
+
+      const els = {
+        staff: document.querySelector('#staff'),
+        phase: document.querySelector('#phase'),
+        phaseText: document.querySelector('#phaseText'),
+        round: document.querySelector('#round'),
+        progress: document.querySelector('#progress'),
+        startButton: document.querySelector('#startButton'),
+        pauseButton: document.querySelector('#pauseButton'),
+        nextButton: document.querySelector('#nextButton'),
+        waiting: document.querySelector('#waiting'),
+        answer: document.querySelector('#answer'),
+        noteName: document.querySelector('#noteName'),
+        noteSub: document.querySelector('#noteSub'),
+        valves: [...document.querySelectorAll('.valve')],
+        openMark: document.querySelector('#openMark'),
+        slideNotice: document.querySelector('#slideNotice'),
+        liveStatus: document.querySelector('#liveStatus')
+      };
+
+      let current = null;
+      let phase = 'question';
+      let round = 0;
+      let started = false;
+      let paused = true;
+      let phaseStartedAt = 0;
+      let phaseDuration = NOTE_MS;
+      let remaining = NOTE_MS;
+      let rafId = 0;
+
+      function renderNote(item) {
+        const [letter, accidental, octave] = item.spelling;
+        els.staff.replaceChildren();
+
+        if (!window.VexFlow) {
+          els.staff.innerHTML = '<div class="score-error">악보 라이브러리를 불러오지 못했습니다.<br>배포 파일을 확인해 주세요.</div>';
+          return;
+        }
+
+        const { Accidental, Renderer, Stave, StaveNote, Stem, TickContext } = VexFlow;
+        const renderer = new Renderer(els.staff, Renderer.Backends.SVG);
+        renderer.resize(360, 280);
+        const context = renderer.getContext();
+        context.setFillStyle('#2f2d28');
+        context.setStrokeStyle('#2f2d28');
+
+        const stave = new Stave(26, 68, 308);
+        stave.addClef('treble');
+        stave.setContext(context).draw();
+
+        const note = new StaveNote({
+          clef: 'treble',
+          keys: [`${letter.toLowerCase()}/${octave}`],
+          duration: 'q'
+        });
+        const isOnOrAboveMiddleLine = octave > 4 || (octave === 4 && staffOrder[letter] >= staffOrder.B);
+        note.setStemDirection(isOnOrAboveMiddleLine ? Stem.DOWN : Stem.UP);
+        if (accidental) note.addModifier(new Accidental(accidental), 0);
+        note.setStave(stave).setContext(context);
+
+        const tickContext = new TickContext();
+        tickContext.addTickable(note).preFormat().setX(100);
+        note.draw();
+      }
+
+      function chooseNote() {
+        const midis = Object.keys(fingerings).map(Number);
+        let midi;
+        do {
+          midi = midis[Math.floor(Math.random() * midis.length)];
+        } while (current && midi === current.midi && midis.length > 1);
+        const variants = spellings[midi];
+        const spelling = variants[Math.floor(Math.random() * variants.length)];
+        return { midi, spelling, fingering: fingerings[midi] };
+      }
+
+      function prettyName(spelling) {
+        const [letter, accidental] = spelling;
+        return korean[letter] + (accidental === '#' ? '♯' : accidental === 'b' ? '♭' : '');
+      }
+
+      function latinName(spelling) {
+        const [letter, accidental, octave] = spelling;
+        return `${letter}${accidental === 'b' ? '♭' : accidental === '#' ? '♯' : ''}${octave}`;
+      }
+
+      function showQuestion() {
+        phase = 'question';
+        round += 1;
+        current = chooseNote();
+        renderNote(current);
+        els.phase.classList.remove('reveal');
+        els.phaseText.textContent = !started ? '시작을 눌러주세요' : paused ? '잠시 멈췄습니다' : '운지를 떠올려 보세요';
+        els.round.textContent = `ROUND ${String(round).padStart(2, '0')}`;
+        els.waiting.classList.remove('hidden');
+        els.answer.classList.remove('visible');
+        els.liveStatus.textContent = `새 문제. ${round}번째 음표가 표시되었습니다.`;
+        beginPhase(NOTE_MS);
+      }
+
+      function showAnswer() {
+        phase = 'answer';
+        const name = prettyName(current.spelling);
+        els.phase.classList.add('reveal');
+        els.phaseText.textContent = '정답을 확인하세요';
+        els.noteName.textContent = name;
+        els.noteSub.textContent = `${latinName(current.spelling)} · B♭ 트럼펫 기보음`;
+        els.valves.forEach((valve) => valve.classList.toggle('pressed', current.fingering.includes(valve.dataset.valve)));
+        els.openMark.classList.toggle('visible', current.fingering === '0');
+        const needsThirdSlide = thirdSlideNotes.has(current.midi);
+        els.slideNotice.hidden = !needsThirdSlide;
+        els.waiting.classList.add('hidden');
+        els.answer.classList.add('visible');
+        const fingerText = current.fingering === '0' ? '오픈' : `${current.fingering.split('').join(', ')}번 밸브`;
+        const slideText = needsThirdSlide ? ' 3번 슬라이드를 빼세요.' : '';
+        els.liveStatus.textContent = `정답은 ${name}, ${fingerText}입니다.${slideText}`;
+        beginPhase(ANSWER_MS);
+      }
+
+      function beginPhase(duration) {
+        phaseDuration = duration;
+        remaining = duration;
+        phaseStartedAt = performance.now();
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(tick);
+      }
+
+      function tick(now) {
+        if (paused) return;
+        const elapsed = now - phaseStartedAt;
+        remaining = Math.max(0, phaseDuration - elapsed);
+        els.progress.style.transform = `scaleX(${remaining / phaseDuration})`;
+        els.progress.style.background = phase === 'answer' ? 'var(--gold)' : 'var(--red)';
+        if (remaining <= 0) {
+          phase === 'question' ? showAnswer() : showQuestion();
+          return;
+        }
+        rafId = requestAnimationFrame(tick);
+      }
+
+      function startQuiz() {
+        if (started && !paused) return;
+        started = true;
+        paused = false;
+        els.startButton.textContent = '진행 중';
+        els.startButton.disabled = true;
+        els.pauseButton.disabled = false;
+        els.pauseButton.setAttribute('aria-pressed', 'false');
+        els.phaseText.textContent = phase === 'question' ? '운지를 떠올려 보세요' : '정답을 확인하세요';
+        phaseStartedAt = performance.now() - (phaseDuration - remaining);
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(tick);
+        els.liveStatus.textContent = '퀴즈를 시작합니다.';
+      }
+
+      function pauseQuiz() {
+        if (!started || paused) return;
+        paused = true;
+        cancelAnimationFrame(rafId);
+        els.startButton.textContent = '계속';
+        els.startButton.disabled = false;
+        els.pauseButton.disabled = true;
+        els.pauseButton.setAttribute('aria-pressed', 'true');
+        els.phaseText.textContent = '잠시 멈췄습니다';
+        els.liveStatus.textContent = '퀴즈를 일시정지했습니다.';
+      }
+
+      function skip() {
+        showQuestion();
+      }
+
+      els.startButton.addEventListener('click', startQuiz);
+      els.pauseButton.addEventListener('click', pauseQuiz);
+      els.nextButton.addEventListener('click', skip);
+      document.addEventListener('keydown', (event) => {
+        if (event.code === 'Space') {
+          event.preventDefault();
+          started && !paused ? pauseQuiz() : startQuiz();
+        }
+        if (event.key.toLowerCase() === 'n') skip();
+      });
+
+      showQuestion();
+    })();
+  </script>
+</body>
+</html>
