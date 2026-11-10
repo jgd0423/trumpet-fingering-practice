@@ -111,7 +111,7 @@
     .subtitle {
       margin: 10px 0 0;
       color: var(--paper-deep);
-      font-size: .9rem;
+      font-size: .95rem;
       font-style: italic;
       letter-spacing: .08em;
       font-family: var(--serif-latin);
@@ -522,7 +522,7 @@
       .title-row { gap: 4px; }
       h1 { min-width: 0; font-size: clamp(1.75rem, 7.8vw, 2.35rem); white-space: nowrap; letter-spacing: -.05em; }
       .flourish { flex: 0 0 auto; font-size: 1.05rem; }
-      .subtitle { max-width: 100%; margin-top: 6px; font-size: clamp(.56rem, 2.45vw, .72rem); letter-spacing: .015em; white-space: nowrap; }
+      .subtitle { max-width: 100%; margin-top: 6px; font-size: clamp(.72rem, 3vw, .82rem); letter-spacing: 0; white-space: nowrap; }
       .range { margin-top: 4px; font-size: .63rem; }
       .quiz { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(205px, .45fr); }
       .quiz { outline-width: 4px; outline-offset: -10px; }
@@ -559,7 +559,7 @@
     @media (max-width: 380px) {
       h1 { font-size: 1.72rem; }
       .flourish { font-size: 1rem; }
-      .subtitle { font-size: .68rem; }
+      .subtitle { font-size: .75rem; }
       .score-panel { padding-left: 18px; padding-right: 18px; }
       #phaseText { max-width: 145px; }
       .valves { gap: 8px; }
@@ -623,7 +623,7 @@
         <div id="answer" class="answer-content">
           <p class="answer-label">정답</p>
           <p id="noteName" class="note-name">도</p>
-          <p id="noteSub" class="note-sub">C4 · 기보음</p>
+          <p id="noteSub" class="note-sub">C4</p>
           <div class="valves" aria-label="누를 밸브">
             <span class="valve" data-valve="1">1</span>
             <span class="valve" data-valve="2">2</span>
@@ -787,7 +787,7 @@
         els.phase.classList.add('reveal');
         els.phaseText.textContent = '정답을 확인하세요';
         els.noteName.textContent = name;
-        els.noteSub.textContent = `${latinName(current.spelling)} · B♭ 트럼펫 기보음`;
+        els.noteSub.textContent = latinName(current.spelling);
         els.valves.forEach((valve) => valve.classList.toggle('pressed', current.fingering.includes(valve.dataset.valve)));
         els.openMark.classList.toggle('visible', current.fingering === '0');
         const needsThirdSlide = thirdSlideNotes.has(current.midi);
