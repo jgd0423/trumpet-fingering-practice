@@ -224,10 +224,9 @@
 
     #staff {
       display: block;
-      width: min(100%, 300px);
-      aspect-ratio: 300 / 180;
+      width: min(100%, 270px);
+      aspect-ratio: 270 / 162;
       overflow: visible;
-      transform: translateX(-15px);
     }
 
     #staff svg {
@@ -384,12 +383,15 @@
       max-width: 470px;
       opacity: 0;
       transform: translateY(12px);
-      transition: opacity .28s ease, transform .28s ease;
+      visibility: hidden;
+      transition: opacity .22s ease, transform .22s ease, visibility 0s linear .22s;
     }
 
     .answer-content.visible {
       opacity: 1;
       transform: translateY(0);
+      visibility: visible;
+      transition-delay: 0s;
     }
 
     .note-name {
@@ -474,7 +476,9 @@
       font-style: italic;
       line-height: 1.28;
       text-align: center;
-      transition: opacity .22s ease;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity .12s ease;
     }
 
     .waiting::before,
@@ -489,7 +493,11 @@
     .waiting::before { content: "❧"; margin-bottom: 14px; }
     .waiting::after { content: "✥"; margin-top: 14px; }
 
-    .waiting.hidden { opacity: 0; }
+    .waiting.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transition: none;
+    }
 
     .tip {
       position: absolute;
@@ -722,12 +730,12 @@
 
         const { Accidental, Renderer, Stave, StaveNote, Stem, TickContext } = VexFlow;
         const renderer = new Renderer(els.staff, Renderer.Backends.SVG);
-        renderer.resize(300, 180);
+        renderer.resize(270, 162);
         const context = renderer.getContext();
         context.setFillStyle('#2f2d28');
         context.setStrokeStyle('#2f2d28');
 
-        const stave = new Stave(40, 42, 220);
+        const stave = new Stave(36, 38, 198);
         stave.addClef('treble');
         stave.setContext(context).draw();
 
@@ -742,7 +750,7 @@
         note.setStave(stave).setContext(context);
 
         const tickContext = new TickContext();
-        tickContext.addTickable(note).preFormat().setX(70);
+        tickContext.addTickable(note).preFormat().setX(63);
         note.draw();
       }
 
@@ -863,7 +871,7 @@
         if (event.key.toLowerCase() === 'n') skip();
       });
 
-      showQuestion();
+      requestAnimationFrame(() => requestAnimationFrame(showQuestion));
     })();
   </script>
 </body>
