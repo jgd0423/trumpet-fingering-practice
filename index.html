@@ -140,6 +140,7 @@
       box-shadow: var(--shadow);
     }
 
+    .quiz::before,
     .quiz::after {
       position: absolute;
       z-index: 4;
@@ -149,6 +150,7 @@
       pointer-events: none;
     }
 
+    .quiz::before { content: "✥"; left: 18px; top: 15px; }
     .quiz::after { content: "✥"; right: 18px; bottom: 15px; transform: rotate(45deg); }
 
     .score-panel {
@@ -172,6 +174,8 @@
       gap: 12px;
     }
 
+    .phase-row { padding-left: 30px; }
+
     .transport {
       display: flex;
       min-width: 0;
@@ -186,23 +190,6 @@
       font-weight: 700;
       font-style: italic;
       letter-spacing: .035em;
-    }
-
-    .phase-dot {
-      width: 18px;
-      height: 18px;
-      display: grid;
-      place-items: center;
-      border: 1px solid var(--red);
-      border-radius: 50%;
-      color: var(--red);
-    }
-
-    .phase-dot::after { content: "✦"; font-size: .62rem; }
-
-    .phase.reveal .phase-dot {
-      background: var(--red);
-      color: var(--paper);
     }
 
     .round {
@@ -499,7 +486,7 @@
 
     .tip {
       position: absolute;
-      right: 26px;
+      right: 72px;
       bottom: 24px;
       z-index: 1;
       color: var(--gold-light);
@@ -572,11 +559,12 @@
       .range { margin-top: 4px; font-size: .63rem; }
       .quiz { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(205px, .45fr); }
       .quiz { outline-width: 4px; outline-offset: -10px; }
-      .quiz::after { font-size: 1.55rem; }
+      .quiz::before, .quiz::after { font-size: 1.55rem; }
+      .quiz::before { left: 11px; top: 10px; }
       .quiz::after { right: 11px; bottom: 10px; }
       .score-panel { min-height: 0; padding: 18px 18px 13px; border-right: 0; border-bottom: 4px double var(--gold); }
+      .phase-row { padding-left: 28px; }
       .phase { gap: 7px; font-size: .72rem; }
-      .phase-dot { width: 16px; height: 16px; }
       .round { font-size: .6rem; letter-spacing: .1em; }
       .staff-wrap { min-height: 0; }
       #staff { width: min(100%, 270px); }
@@ -643,7 +631,7 @@
     <section class="quiz" aria-label="트럼펫 운지 퀴즈">
       <div class="score-panel">
         <div class="phase-row">
-          <div id="phase" class="phase"><span class="phase-dot"></span><span id="phaseText">운지를 떠올려 보세요</span></div>
+          <div id="phase" class="phase"><span id="phaseText">운지를 떠올려 보세요</span></div>
           <span id="round" class="round">ROUND 01</span>
         </div>
 
